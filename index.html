@@ -9,12 +9,16 @@
     <script src="app.js"></script>
 </head>
 <body ng-controller="rxController" ng-cloak="">
-
-<ul>
-    <li ng-repeat="phone in phones">
-        <span>{{phone.name}}</span>
-        <p>{{phone.snippet}}</p>
-    </li>
-</ul>
+<table>
+    <tr ng-repeat="user in users">
+        <td width="300">
+            <a style="color: black; font-family: Arial; size: 20px" href="{{user[0].url}}" target="_blank">{{user[0].login}}</a>
+        </td>
+        <td width="300">
+            <img src="{{user[0].avatar_url}}" width="300" height="300"/>
+        </td>
+    </tr>
+</table>
+<a id="bottom"></a>
 </body>
 </html>

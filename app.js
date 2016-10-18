@@ -1,24 +1,19 @@
 var rxApp = angular.module('rxApp', []);
 
-rxApp.controller('rxController', function rxController($scope) {
-    $scope.phones = [];
+rxApp.controller('rxController', function rxController($scope, $anchorScroll, $location) {
+    $scope.users = [];
 
-    $scope.source = Rx.Observable.interval(300).take(3)
-        .map(i => [
-            {
-                id: '1',
-                name: 'Nexus S',
-                snippet: 'Fast just got faster with Nexus S.'
-            }, {
-                id: '2',
-                name: 'Motorola XOOM™ with Wi-Fi',
-                snippet: 'The Next, Next Generation tablet.'
-            }, {
-                id: '3',
-                name: 'MOTOROLA XOOM™',
-                snippet: 'The Next, Next Generation tablet.'
-            }
-        ][i]);
+    $scope.requestStream = Rx.Observable.interval(3000)
+        .map(function () {
+            var randomOffset = Math.floor(Math.random() * 500);
+            return 'https://api.github.com/users?since=' + randomOffset + 'page=1&per_page=1&client_id=86ec4cc09f775228c518&client_secret=9ee0e82b81139a6c5f97c610d7981cf11967c3c4';
+        });
+
+    $scope.source = $scope.requestStream
+        .flatMap(function (requestUrl) {
+            return Rx.Observable.fromPromise($.getJSON(requestUrl));
+        });
+
 
     $scope.ids = angular.copy($scope.source).map(x => parseInt(x.id))
         .reduce((x, y) => x + y)
@@ -27,10 +22,12 @@ rxApp.controller('rxController', function rxController($scope) {
     $scope.source.subscribe(x => addToPage(x));
 
 
-    function addToPage(data){
-        if (angular.isDefined(data)){
-            $scope.phones.push(data);
+    function addToPage(data) {
+        if (angular.isDefined(data)) {
+            $scope.users.push(data);
             $scope.$apply();
         }
+        $location.hash('bottom');
+        $anchorScroll();
     };
 });
