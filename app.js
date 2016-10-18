@@ -9,18 +9,16 @@ rxApp.controller('rxController', function rxController($scope, $anchorScroll, $l
             return 'https://api.github.com/users?since=' + randomOffset + 'page=1&per_page=1&client_id=86ec4cc09f775228c518&client_secret=9ee0e82b81139a6c5f97c610d7981cf11967c3c4';
         });
 
-    $scope.source = requestStream
+    var responseStream = requestStream
         .flatMap(function (requestUrl) {
             return Rx.Observable.fromPromise($.getJSON(requestUrl));
         });
 
-
-    $scope.ids = angular.copy($scope.source).map(x => parseInt(x.id))
+    angular.copy(responseStream).map(x => parseInt(x.id))
         .reduce((x, y) => x + y)
         .subscribe(x => console.log(x));
 
-    $scope.source.subscribe(x => addToPage(x));
-
+    responseStream.subscribe(x => addToPage(x));
 
     function addToPage(data) {
         if (angular.isDefined(data)) {
