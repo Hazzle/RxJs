@@ -14,10 +14,6 @@ rxApp.controller('rxController', function rxController($scope, $anchorScroll, $l
             return Rx.Observable.fromPromise($.getJSON(requestUrl));
         });
 
-    angular.copy(responseStream).map(x => parseInt(x.id))
-        .reduce((x, y) => x + y)
-        .subscribe(x => console.log(x));
-
     responseStream.subscribe(x => addToPage(x));
 
     function addToPage(data) {
